@@ -1,24 +1,24 @@
-import { apiClient } from '../../../shared/api/client'
 import type {
     LoginRequest,
     RegisterRequest,
     AuthResponse,
     RegisterResponse
 } from '../../../shared/types'
+import {rawClient} from '../../../shared/api/client'
 
 export const authApi = {
     register: async (data: RegisterRequest): Promise<RegisterResponse> => {
-        const response = await apiClient.post<RegisterResponse>('/auth/register', data)
-        return response.data
+        const res = await rawClient.post<RegisterResponse>("/auth/register", data);
+        return res.data;
     },
 
     login: async (data: LoginRequest): Promise<AuthResponse> => {
-        const response = await apiClient.post<AuthResponse>('/auth/login', data)
-        return response.data
+        const res = await rawClient.post<AuthResponse>("/auth/login", data);
+        return res.data;
     },
 
     refresh: async (refreshToken: string): Promise<AuthResponse> => {
-        const response = await apiClient.post<AuthResponse>('/auth/refresh', { refreshToken })
-        return response.data
+        const res = await rawClient.post<AuthResponse>("/auth/refresh", { refreshToken });
+        return res.data;
     },
 }

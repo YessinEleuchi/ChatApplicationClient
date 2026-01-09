@@ -1,4 +1,4 @@
-import { apiClient } from '../../../shared/api/client'
+import { apiClient } from '../../../shared/api/apiClient.ts'
 import type { ChatRequest, ChatResponse, Message } from '../../../shared/types'
 
 export const chatApi = {

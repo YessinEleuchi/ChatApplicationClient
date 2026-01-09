@@ -4,6 +4,7 @@ import { AppRouter } from './app/router'
 import { queryClient } from './app/queryClient'
 import { useEffect } from 'react'
 import { useAuthStore } from './domains/auth/store/authStore'
+import AuthEventListener from './app/AuthEventListener'
 
 function App() {
     const hydrate = useAuthStore((state) => state.hydrate)
@@ -15,7 +16,8 @@ function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-                <AppRouter />
+                <AuthEventListener />
+                     <AppRouter />
             </BrowserRouter>
         </QueryClientProvider>
     )

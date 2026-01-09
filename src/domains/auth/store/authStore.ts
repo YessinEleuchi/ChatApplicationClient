@@ -4,7 +4,7 @@ interface AuthState {
     accessToken: string | null
     refreshToken: string | null
     isAuthenticated: boolean
-    setTokens: (accessToken: string, refreshToken: string) => void
+    setTokens: (accessToken: string, refreshToken?: string) => void
     logout: () => void
     hydrate: () => void
 }
@@ -17,15 +17,23 @@ export const useAuthStore = create<AuthState>((set) => ({
     refreshToken: null,
     isAuthenticated: false,
 
-    setTokens: (accessToken: string, refreshToken: string) => {
+    setTokens: (accessToken: string, refreshToken?: string) => {
+        const finalRefreshToken =
+            refreshToken ?? localStorage.getItem(REFRESH_TOKEN_KEY)
+
+        if (finalRefreshToken) {
+            localStorage.setItem(REFRESH_TOKEN_KEY, finalRefreshToken)
+        }
+
         localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
-        localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken)
+
         set({
             accessToken,
-            refreshToken,
-            isAuthenticated: true,
+            refreshToken: finalRefreshToken,
+            isAuthenticated: Boolean(accessToken && finalRefreshToken),
         })
     },
+
 
     logout: () => {
         localStorage.removeItem(ACCESS_TOKEN_KEY)
