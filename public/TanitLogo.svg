@@ -1,0 +1,27 @@
+<!-- Save as: src/assets/logo.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Rings logo">
+    <!-- Background -->
+    <rect width="256" height="256" fill="#6D529F"/>
+
+    <!-- Teal ring -->
+    <ellipse
+            cx="105.77" cy="133.14"
+            rx="30.88" ry="72.83"
+            fill="none"
+            stroke="#42CAC8"
+            stroke-width="8"
+            stroke-linecap="round"
+            transform="rotate(-42.68 105.77 133.14)"
+    />
+
+    <!-- White ring -->
+    <ellipse
+            cx="148.80" cy="121.27"
+            rx="30.86" ry="72.81"
+            fill="none"
+            stroke="#FFFFFF"
+            stroke-width="8"
+            stroke-linecap="round"
+            transform="rotate(-42.67 148.80 121.27)"
+    />
+</svg>
