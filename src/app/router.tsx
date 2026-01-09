@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { ChatPage } from '../pages/ChatPage'
-import { ProtectedRoute } from '../shared/ui/ProtectedRoute'
+import { ProtectedRoute } from '../shared/ui/routes/ProtectedRoute.tsx'
 
 export function AppRouter() {
     return (
