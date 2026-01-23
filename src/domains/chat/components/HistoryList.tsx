@@ -1,29 +1,57 @@
-import { useQuery } from '@tanstack/react-query'
-import { chatApi } from '../api/chatApi'
-import { useEffect, useRef } from 'react'
+import { useQuery } from "@tanstack/react-query";
+import { chatApi } from "../api/chatApi";
+import { useEffect, useMemo, useRef } from "react";
+import { useAuthStore } from "../../auth/store/authStore"
 
 function formatTimestamp(timestamp: string): string {
-    const date = new Date(timestamp)
-    return date.toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    })
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
 }
 
 export function HistoryList() {
-    const messagesEndRef = useRef<HTMLDivElement>(null)
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const userId = useAuthStore((s) => s.userId);
 
-    const { data: messages, isLoading, error } = useQuery({
-        queryKey: ['history'],
+    const {
+        data: messages,
+        isLoading,
+        isFetching,
+        error,
+    } = useQuery({
+        queryKey: ["history", userId],
         queryFn: chatApi.getHistory,
-        refetchInterval: 5000,
-    })
+        enabled: !!userId,
+        // optionnel: évite de garder des messages d'un autre user
+        // (React Query gère déjà bien via la queryKey, mais ça rend l’UX plus clean)
+        gcTime: 5 * 60 * 1000,
+    });
 
+    // Scroll quand la liste change
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages?.length]);
+
+    // Normaliser + trier si besoin (utile si backend renvoie pas trié)
+    const safeMessages = useMemo(() => {
+        if (!messages) return [];
+        return [...messages].sort(
+            (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
+    }, [messages]);
+
+    if (!userId) {
+        return (
+            <div className="flex-1 flex items-center justify-center">
+                <p className="text-white/60">Please login to see your messages.</p>
+            </div>
+        );
+    }
 
     if (isLoading) {
         return (
@@ -33,7 +61,7 @@ export function HistoryList() {
                     <p className="text-white/60">Loading conversation...</p>
                 </div>
             </div>
-        )
+        );
     }
 
     if (error) {
@@ -44,10 +72,10 @@ export function HistoryList() {
                     <p className="text-white/40 text-sm">Please try refreshing the page</p>
                 </div>
             </div>
-        )
+        );
     }
 
-    if (!messages?.length) {
+    if (!safeMessages.length) {
         return (
             <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
@@ -60,12 +88,19 @@ export function HistoryList() {
                     <p className="text-white/40 text-sm">Start a conversation by typing a message below</p>
                 </div>
             </div>
-        )
+        );
     }
 
     return (
         <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-            {messages.map((message) => (
+            {/* petit indicateur discret quand ça refetch */}
+            {isFetching && (
+                <div className="text-xs text-white/40">
+                    Syncing…
+                </div>
+            )}
+
+            {safeMessages.map((message) => (
                 <div key={message.id} className="space-y-3 animate-fade-in">
                     {/* User message */}
                     <div className="message-bubble message-user">
@@ -88,7 +123,8 @@ export function HistoryList() {
                     </div>
                 </div>
             ))}
+
             <div ref={messagesEndRef} />
         </div>
-    )
+    );
 }

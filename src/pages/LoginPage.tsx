@@ -1,5 +1,5 @@
 import {LoginForm}  from "../domains/auth/forms/LoginForm"
-import {AuthFooter} from "@/shared/ui/components/AuthFooter.tsx";
+import {AuthFooter} from "../shared/ui/components/AuthFooter.tsx";
 
 export function LoginPage() {
     return (

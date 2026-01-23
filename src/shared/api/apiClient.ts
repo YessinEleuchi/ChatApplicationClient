@@ -65,7 +65,6 @@ apiClient.interceptors.response.use(
 
         const refreshToken = useAuthStore.getState().refreshToken;
 
-        // No refresh token => logout
         if (!refreshToken) {
             isRefreshing = false;
             dispatchLogout("missing_refresh_token");
